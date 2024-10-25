@@ -14,5 +14,9 @@ pdfExtract.extract("UV20422-1.pdf", options, (err, data) => {
     element.content.forEach((textObject) => textOnly.push(textObject));
   });
 
-  console.log(textOnly);
+  //Check if there are any anomalies - i.e. more than 8 properties in each object.
+  const anomalies = textOnly.filter(
+    (textObject) => Object.keys(textObject).length > 8
+  );
+  //console.log(anomalies);
 });
