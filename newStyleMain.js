@@ -33,10 +33,11 @@ function returnFirstPage(data) {
       firstPage.forEach((element) => (element.y = pageHeight - element.y));
       //annotate with page number
       firstPage.forEach((element) => (element.pageNumber = index));
+      firstPage = firstPage.filter((element) => element.str != "");
       return true; // Return true to stop the .find loop
     }
   });
-  //console.log(firstPage);
+  console.log(firstPage);
   return firstPage;
 }
 
@@ -64,10 +65,10 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   const form = pdfDoc.getForm();
   const page = pdfDoc.getPage(pageNum); //first page
 
+  //add date achieved
   let xcoord = firstPage[strMandatoryIndex + 1].x;
   let ycoord = firstPage[strMandatoryIndex + 1].y;
-
-  for (let i = strMandatoryIndex; i < strMandatoryIndex + numMandatory; i++) {
+  for (let i = strMandatoryIndex; i <= strMandatoryIndex + numMandatory; i++) {
     const textField = form.createTextField("myTextField" + i);
     textField.addToPage(page, {
       x: xcoord,
@@ -93,12 +94,15 @@ async function saveModifiedPDF(pdfDoc, outputPath) {
   fs.writeFileSync(outputPath, modifiedPdfBytes);
 }
 
-var firstPageArr;
-//prettier-ignore
-extractData("AB30493.pdf") //
-  .then((data) => returnFirstPage(data))
-  .then((firstPage) => (firstPageArr = firstPage))
-  .then(() => modifyExistingPDF("AB30493.pdf"))
-  .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
-  .then((pdfDoc) => saveModifiedPDF(pdfDoc, "AB30493" + "-editable.pdf")
-  );
+const inputFiles = fs.readdirSync("./input");
+inputFiles.forEach((element) => {
+  var firstPageArr;
+  const book = element;
+  //prettier-ignore
+  extractData("./input/" + book) //
+    .then((data) => returnFirstPage(data))
+    .then((firstPage) => (firstPageArr = firstPage))
+    .then(() => modifyExistingPDF("./input/" + book))
+    .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
+    .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
+});
