@@ -30,13 +30,8 @@ function extractText(data) {
 
 //searches textOnly for specific string
 function searchText() {
-  filteredText = textOnly.filter((text) => text.str.includes("eye"));
+  filteredText = textOnly.filter((text) => text.str.includes("QTF"));
   console.log(filteredText);
-}
-
-async function saveModifiedPDF(pdfDoc, outputPath) {
-  const modifiedPdfBytes = await pdfDoc.save();
-  fs.writeFileSync(outputPath, modifiedPdfBytes);
 }
 
 //Call extract text function on a PDF
