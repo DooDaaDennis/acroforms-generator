@@ -33,4 +33,5 @@ modifyExistingPDF(book) //
   .then((pdfDoc) => addTextField(pdfDoc))
   .then((pdfDoc) =>
     saveModifiedPDF(pdfDoc, book.slice(0, -4) + "-editable.pdf")
-  );
+  )
+  .then(() => console.log("done"));
