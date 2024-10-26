@@ -20,8 +20,11 @@ function extractText(data) {
   const myPages = data.pages;
   var textOnly = [];
   myPages.forEach((element, index) => {
+    const pageHeight = element.pageInfo.height;
     element.content.forEach((textObject) => (textObject.pageNumber = index)); //Add page numbers to each text snippet - loop through each page, and within each page loop through the text snippets and add the array index
-    //element.content.forEach((textObject) => (textObject.y = index)); //Add page numbers to each text snippet - loop through each page, and within each page loop through the text snippets and add the array index
+    element.content.forEach(
+      (textObject) => (textObject.y = pageHeight - textObject.y)
+    ); //Add page numbers to each text snippet - loop through each page, and within each page loop through the text snippets and add the array index, and invert y coords
     element.content.forEach((textObject) => textOnly.push(textObject)); //Produces textOnly array of text snippets
     //console.log(textOnly);
   });
@@ -46,7 +49,7 @@ async function addTextField(pdfDoc, xcoord, ycoord, pageno, count) {
   const textField = form.createTextField("myTextField" + count);
   textField.addToPage(page, {
     x: xcoord,
-    y: ycoord,
+    y: ycoord - 5,
     width: 75,
     height: 20,
     borderWidth: 1,
