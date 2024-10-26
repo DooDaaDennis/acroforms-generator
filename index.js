@@ -83,7 +83,7 @@ inputFiles.forEach((element) => {
   .then(extractText)
   .then((textOnly) => searchText(textOnly))
   .then((filteredText) => (textFieldsToAdd = filteredText))
-  .then(() => modifyExistingPDF("./input/" + book)) //
+  .then(() => modifyExistingPDF("./input/" + book))
   .then((pdfDoc) => addAllTextFields(textFieldsToAdd, pdfDoc))
   .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
   .then(() => console.log(book + " complete"));

@@ -1,7 +1,7 @@
 const PDFExtract = require("pdf.js-extract").PDFExtract;
 const pdfExtract = new PDFExtract();
 const options = { disableCombineTextItems: false }; //do not attempt to combine same line text items
-const { PDFDocument, rgb, CYMK } = require("pdf-lib");
+const { PDFDocument, rgb, CYMK, stroke } = require("pdf-lib");
 const fs = require("fs");
 
 function extractData(pdf) {
@@ -15,7 +15,7 @@ function extractData(pdf) {
 
 function returnFirstPage(data) {
   const myPages = data.pages;
-  let firstPage = null;
+  let firstPage;
 
   myPages.find((element, index) => {
     const pageHeight = element.pageInfo.height;
@@ -31,11 +31,55 @@ function returnFirstPage(data) {
       });
       //invert y coords
       firstPage.forEach((element) => (element.y = pageHeight - element.y));
+      //annotate with page number
+      firstPage.forEach((element) => (element.pageNumber = index));
       return true; // Return true to stop the .find loop
     }
   });
-
+  //console.log(firstPage);
   return firstPage;
+}
+
+//Get number of mandatory unit rows
+function drawFirstPageFields(pdfDoc, firstPage) {
+  let strMandatoryIndex = firstPage.findIndex(
+    (obj) => obj.str === "Mandatory units"
+  );
+
+  let strOptionalIndex =
+    firstPage.findIndex((obj) => obj.str === "Optional units") != -1
+      ? firstPage.findIndex((obj) => obj.str === "Optional units")
+      : firstPage.length();
+
+  let numMandatory = strOptionalIndex - strMandatoryIndex - 1;
+
+  //prettier-ignore
+  // first distance between mandatory and optional
+  let totalHeight = firstPage[strMandatoryIndex].y - firstPage[strOptionalIndex].y;
+
+  let rowHeight = totalHeight / numMandatory;
+
+  let pageNum = firstPage[0].pageNumber;
+
+  const form = pdfDoc.getForm();
+  const page = pdfDoc.getPage(pageNum); //first page
+
+  let xcoord = firstPage[strMandatoryIndex + 1].x;
+  let ycoord = firstPage[strMandatoryIndex + 1].y;
+
+  for (let i = strMandatoryIndex + 1; i < strOptionalIndex; i++) {
+    const textField = form.createTextField("myTextField" + i);
+    textField.addToPage(page, {
+      x: xcoord,
+      y: ycoord - 5,
+      width: 75,
+      height: 18,
+      borderWidth: 0,
+      backgroundColor: rgb(1, 1, 1),
+    });
+    ycoord += rowHeight;
+  }
+  return pdfDoc;
 }
 
 async function modifyExistingPDF(path) {
@@ -44,6 +88,17 @@ async function modifyExistingPDF(path) {
   return pdfDoc;
 }
 
+async function saveModifiedPDF(pdfDoc, outputPath) {
+  const modifiedPdfBytes = await pdfDoc.save();
+  fs.writeFileSync(outputPath, modifiedPdfBytes);
+}
+
+var firstPageArr;
+//prettier-ignore
 extractData("AB30493.pdf") //
   .then((data) => returnFirstPage(data))
-  .then((firstPage) => console.log(firstPage));
+  .then((firstPage) => (firstPageArr = firstPage))
+  .then(() => modifyExistingPDF("AB30493.pdf"))
+  .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
+  .then((pdfDoc) => saveModifiedPDF(pdfDoc, "AB30493" + "-editable.pdf")
+  );
