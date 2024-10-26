@@ -51,11 +51,11 @@ function drawFirstPageFields(pdfDoc, firstPage) {
       ? firstPage.findIndex((obj) => obj.str === "Optional units")
       : firstPage.length();
 
-  let numMandatory = strOptionalIndex - strMandatoryIndex - 1;
+  let numMandatory = strOptionalIndex - strMandatoryIndex - 2;
 
   //prettier-ignore
   // first distance between mandatory and optional
-  let totalHeight = firstPage[strMandatoryIndex].y - firstPage[strOptionalIndex].y;
+  let totalHeight = firstPage[strMandatoryIndex+1].y - firstPage[strOptionalIndex-1].y;
 
   let rowHeight = totalHeight / numMandatory;
 
@@ -67,7 +67,7 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   let xcoord = firstPage[strMandatoryIndex + 1].x;
   let ycoord = firstPage[strMandatoryIndex + 1].y;
 
-  for (let i = strMandatoryIndex + 1; i < strOptionalIndex; i++) {
+  for (let i = strMandatoryIndex; i < strMandatoryIndex + numMandatory; i++) {
     const textField = form.createTextField("myTextField" + i);
     textField.addToPage(page, {
       x: xcoord,
@@ -77,7 +77,7 @@ function drawFirstPageFields(pdfDoc, firstPage) {
       borderWidth: 0,
       backgroundColor: rgb(1, 1, 1),
     });
-    ycoord += rowHeight;
+    ycoord -= rowHeight;
   }
   return pdfDoc;
 }
