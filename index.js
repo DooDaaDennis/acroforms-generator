@@ -55,6 +55,8 @@ async function addTextField(pdfDoc, xcoord, ycoord, pageno, count) {
     borderWidth: 1,
     backgroundColor: rgb(1, 1, 1),
   });
+  textField.setFontSize(12); // Set the font size to 12
+  textField.disableScrolling();
   return pdfDoc;
 }
 
