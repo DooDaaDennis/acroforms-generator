@@ -1,7 +1,11 @@
 const PDFExtract = require("pdf.js-extract").PDFExtract;
 const pdfExtract = new PDFExtract();
 const options = { disableCombineTextItems: false }; //do not attempt to combine same line text items
+const { PDFDocument, rgb } = require("pdf-lib");
+const fs = require("fs");
+
 var textOnly = [];
+var filteredText = [];
 
 //extracts data from the pdf
 function extractData(pdf) {
@@ -20,18 +24,22 @@ function extractText(data) {
   myPages.forEach((element, index) => {
     element.content.forEach((textObject) => (textObject.pageNumber = index)); //Add page numbers to each text snippet - loop through each page, and within each page loop through the text snippets and add the array index
     element.content.forEach((textObject) => textOnly.push(textObject)); //Produces textOnly array of text snippets
+    //console.log(textOnly);
   });
 }
 
+//searches textOnly for specific string
 function searchText() {
-  const filteredText = textOnly.filter((text) => text.str === "GLH");
+  filteredText = textOnly.filter((text) => text.str.includes("eye"));
   console.log(filteredText);
+}
+
+async function saveModifiedPDF(pdfDoc, outputPath) {
+  const modifiedPdfBytes = await pdfDoc.save();
+  fs.writeFileSync(outputPath, modifiedPdfBytes);
 }
 
 //Call extract text function on a PDF
 extractData("UV20422-1.pdf") //
   .then(extractText)
   .then(searchText);
-// .then(() => {
-//   console.log(textOnly);
-// });
