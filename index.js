@@ -51,12 +51,11 @@ async function addTextField(pdfDoc, xcoord, ycoord, pageno, count) {
     x: xcoord,
     y: ycoord - 5,
     width: 75,
-    height: 20,
-    borderWidth: 1,
+    height: 18,
+    borderWidth: 0,
     backgroundColor: rgb(1, 1, 1),
   });
   textField.setFontSize(12); // Set the font size to 12
-  textField.disableScrolling();
   return pdfDoc;
 }
 
@@ -76,13 +75,12 @@ async function saveModifiedPDF(pdfDoc, outputPath) {
 
 var textFieldsToAdd;
 const book = "UV20422-1.pdf";
+//prettier-ignore
 extractData(book) //
   .then(extractText)
   .then((textOnly) => searchText(textOnly))
   .then((filteredText) => (textFieldsToAdd = filteredText))
   .then(() => modifyExistingPDF(book)) //
   .then((pdfDoc) => addAllTextFields(textFieldsToAdd, pdfDoc))
-  .then((pdfDoc) =>
-    saveModifiedPDF(pdfDoc, book.slice(0, -4) + "-editable.pdf")
-  )
+  .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
   .then(() => console.log("done"));
