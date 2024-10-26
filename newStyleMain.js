@@ -37,7 +37,7 @@ function returnFirstPage(data) {
       return true; // Return true to stop the .find loop
     }
   });
-  console.log(firstPage);
+  //console.log(firstPage);
   return firstPage;
 }
 
@@ -66,7 +66,7 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   const page = pdfDoc.getPage(pageNum); //first page
 
   //add date achieved
-  let xcoord = firstPage[strMandatoryIndex + 1].x;
+  let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
   let ycoord = firstPage[strMandatoryIndex + 1].y;
   for (let i = strMandatoryIndex; i <= strMandatoryIndex + numMandatory; i++) {
     const textField = form.createTextField("myTextField" + i);
