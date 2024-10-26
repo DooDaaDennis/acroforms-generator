@@ -73,14 +73,17 @@ async function saveModifiedPDF(pdfDoc, outputPath) {
 
 //Call extract text function on a PDF
 
-var textFieldsToAdd;
-const book = "UV20422-1.pdf";
-//prettier-ignore
-extractData(book) //
+const inputFiles = fs.readdirSync("./input");
+inputFiles.forEach((element) => {
+  var textFieldsToAdd;
+  const book = element;
+  //prettier-ignore
+  extractData("./input/" + book) //
   .then(extractText)
   .then((textOnly) => searchText(textOnly))
   .then((filteredText) => (textFieldsToAdd = filteredText))
-  .then(() => modifyExistingPDF(book)) //
+  .then(() => modifyExistingPDF("./input/" + book)) //
   .then((pdfDoc) => addAllTextFields(textFieldsToAdd, pdfDoc))
   .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
   .then(() => console.log("done"));
+});
