@@ -77,6 +77,7 @@ const inputFiles = fs.readdirSync("./input");
 inputFiles.forEach((element) => {
   var textFieldsToAdd;
   const book = element;
+  console.log("Adding input fields to " + book);
   //prettier-ignore
   extractData("./input/" + book) //
   .then(extractText)
@@ -85,5 +86,5 @@ inputFiles.forEach((element) => {
   .then(() => modifyExistingPDF("./input/" + book)) //
   .then((pdfDoc) => addAllTextFields(textFieldsToAdd, pdfDoc))
   .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
-  .then(() => console.log("done"));
+  .then(() => console.log(book + " complete"));
 });
