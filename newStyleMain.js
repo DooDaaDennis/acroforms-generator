@@ -3,6 +3,7 @@ const pdfExtract = new PDFExtract();
 const options = { disableCombineTextItems: false }; //do not attempt to combine same line text items
 const { PDFDocument, rgb, CYMK, stroke } = require("pdf-lib");
 const fs = require("fs");
+var myPages;
 
 function extractData(pdf) {
   return new Promise((resolve, reject) => {
@@ -14,7 +15,7 @@ function extractData(pdf) {
 }
 
 function returnFirstPage(data) {
-  const myPages = data.pages;
+  myPages = data.pages;
   let firstPage;
   //console.log(data.pages[0]);
 
