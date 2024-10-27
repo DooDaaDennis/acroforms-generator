@@ -65,37 +65,25 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
 
   const form = pdfDoc.getForm();
   const page = pdfDoc.getPage(pageNum); //first page
+  const fieldTypeArr = ["Date", "Learner", "Assessor", "IQA"];
 
   //add date achieved
-  for (
-    let i = strMandatoryIndex + 1;
-    i <= strMandatoryIndex + numMandatory + 1;
-    i++
-  ) {
-    const textField = form.createTextField("myDateField" + Math.random());
-    let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
-    let ycoord = firstPage[i].y;
-    let width = firstPage.find((element) => element.str.includes("Date")).width;
-    let height = firstPage[i].y - firstPage[i + 1].y - 2;
-    textField.addToPage(page, {
-      x: xcoord,
-      y: ycoord - 5,
-      width: width,
-      height: height,
-      borderWidth: 0,
-      backgroundColor: rgb(1, 1, 1),
-    });
-    //add learner signature
-    //prettier-ignore
+  fieldTypeArr.forEach((fieldTypeElement, fieldTypeIndex) => {
     for (
       let i = strMandatoryIndex + 1;
       i <= strMandatoryIndex + numMandatory + 1;
       i++
     ) {
-      const textField = form.createTextField("mySignatureField" + Math.random());
-      let xcoord = firstPage.find((element) => element.str.includes("Learner")).x;
+      const textField = form.createTextField(
+        "myField" + fieldTypeElement + fieldTypeIndex + Math.random()
+      );
+      let xcoord = firstPage.find((element) =>
+        element.str.includes(fieldTypeElement)
+      ).x;
       let ycoord = firstPage[i].y;
-      let width = firstPage.find((element) => element.str.includes("Learner")).width;
+      let width = firstPage.find((element) =>
+        element.str.includes(fieldTypeElement)
+      ).width;
       let height = firstPage[i].y - firstPage[i + 1].y - 2;
       textField.addToPage(page, {
         x: xcoord,
@@ -106,51 +94,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
         backgroundColor: rgb(1, 1, 1),
       });
     }
-
-    //add assessor signature
-    //prettier-ignore
-    for (
-        let i = strMandatoryIndex + 1;
-        i <= strMandatoryIndex + numMandatory + 1;
-        i++
-      ) {
-        const textField = form.createTextField("myAssessorField" + Math.random());
-        let xcoord = firstPage.find((element) => element.str.includes("Assessor")).x;
-        let ycoord = firstPage[i].y;
-        let width = firstPage.find((element) => element.str.includes("Assessor")).width;
-        let height = firstPage[i].y - firstPage[i + 1].y - 2;
-        textField.addToPage(page, {
-          x: xcoord,
-          y: ycoord - 5,
-          width: width,
-          height: height,
-          borderWidth: 0,
-          backgroundColor: rgb(1, 1, 1),
-        });
-      }
-
-    //add IQA signature
-    //prettier-ignore
-    for (
-        let i = strMandatoryIndex + 1;
-        i <= strMandatoryIndex + numMandatory + 1;
-        i++
-      ) {
-        const textField = form.createTextField("myIQAField" + Math.random());
-        let xcoord = firstPage.find((element) => element.str.includes("IQA")).x;
-        let ycoord = firstPage[i].y;
-        let width = firstPage.find((element) => element.str.includes("IQA")).width;
-        let height = firstPage[i].y - firstPage[i + 1].y - 2;
-        textField.addToPage(page, {
-          x: xcoord,
-          y: ycoord - 5,
-          width: width,
-          height: height,
-          borderWidth: 0,
-          backgroundColor: rgb(1, 1, 1),
-        });
-      }
-  }
+  });
   return pdfDoc;
 }
 
