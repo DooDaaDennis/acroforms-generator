@@ -3,6 +3,7 @@ const pdfExtract = new PDFExtract();
 const options = { disableCombineTextItems: false }; //do not attempt to combine same line text items
 const { PDFDocument, rgb, CYMK, stroke } = require("pdf-lib");
 const fs = require("fs");
+const { stringify } = require("querystring");
 var myPages;
 
 function extractData(pdf) {
@@ -161,6 +162,12 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
 
 function drawPracticalFields(pdfDoc) {
   const pageHeight = myPages[0].pageInfo.height;
+  myPages.forEach((page, index) => {
+    page.content.forEach((pageContents) => (pageContents.pageNum = index));
+    page.content.forEach(
+      (pageContents) => (pageContents.y = pageHeight - pageContents.y)
+    );
+  });
   var practicalPages = myPages.filter((element, index) => {
     if (
       element.content.some((contents) =>
@@ -173,9 +180,6 @@ function drawPracticalFields(pdfDoc) {
   //console.log(practicalPages);
 
   practicalPages.forEach((page) => {
-    page.content.forEach((textSnippet) => {
-      textSnippet.y = pageHeight - textSnippet.y;
-    });
     let practicalPageContent = page.content.filter(
       (textSnippet2) => textSnippet2.str != ""
     );
@@ -185,7 +189,14 @@ function drawPracticalFields(pdfDoc) {
     practicalPageContent.sort((a, b) => {
       return a.y - b.y || a.x - b.x;
     });
-    console.log(practicalPageContent);
+
+    var myJsonString = JSON.stringify(practicalPageContent);
+    if (/riteria.*riteria/.test(myJsonString)) {
+      console.log("hi");
+    } else {
+      console.log("no");
+    }
+    //console.log(practicalPageContent);
   });
   return pdfDoc;
 }
