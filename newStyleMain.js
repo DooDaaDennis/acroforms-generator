@@ -45,8 +45,8 @@ function returnFirstPage(data) {
 
 //Get number of mandatory unit rows
 function drawFirstPageFields(pdfDoc, firstPage, docName) {
-  let strMandatoryIndex = firstPage.findIndex(
-    (obj) => obj.str === "Mandatory units"
+  let strMandatoryIndex = firstPage.findIndex((obj) =>
+    obj.str.includes("Mandatory unit")
   );
   const footerIndex = firstPage.length;
   let strOptionalIndex =
