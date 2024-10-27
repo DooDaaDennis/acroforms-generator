@@ -181,4 +181,5 @@ inputFiles.forEach((element) => {
     .then(() => modifyExistingPDF("./input/" + book))
     .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
     .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
+    .catch((error)=>console.log(error + book))
 });
