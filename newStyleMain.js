@@ -65,7 +65,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
 
   const form = pdfDoc.getForm();
   const page = pdfDoc.getPage(pageNum); //first page
-  const fieldTypeArr = ["Date", "Learner", "Assessor", "IQA"];
+  const fieldTypeArr = ["Date", "Learner", "Assessor", "if sampled"];
 
   //add mandatory unit fields
   //prettier-ignore
@@ -87,7 +87,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
         }
       } else if (fieldTypeElement === "Assessor"){
         if (firstPage.some((obj)=>obj.str ==="initials")){
-            width = firstPage.find((element) => element.str.includes("IQA")).x - 
+            width = firstPage.find((element) => element.str.includes("if sampled")).x - 
             firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10
        }}
       let height = firstPage[i].y - firstPage[i + 1].y - 2;
@@ -104,7 +104,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
 
   //add optional unit fields
   //prettier-ignore
-  const optionalUnitFieldTypeArr = ["Optional", "Date", "Learner", "Assessor", "IQA"]
+  const optionalUnitFieldTypeArr = ["Optional", "Date", "Learner", "Assessor", "if sampled"]
   const optionalUnitRowHeight =
     firstPage[strOptionalIndex - 1].y - firstPage[strOptionalIndex].y - 2;
   const footerIndex = firstPage.length;
@@ -127,7 +127,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
         }
       } else if (fieldTypeElement === "Assessor") {
         if (firstPage.some((obj) => obj.str === "initials")) {
-          width = firstPage.find((element) => element.str.includes("IQA")).x -
+          width = firstPage.find((element) => element.str.includes("if sampled")).x -
             firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10;
         }
       }
@@ -146,11 +146,11 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
     x: firstPage.find((element) => element.str.includes("Optional")).x - 5.3,
     y: firstPage[strOptionalIndex].y - 5.7,
     width:
-      firstPage.find((element) => element.str.includes("IQA")).x -
+      firstPage.find((element) => element.str.includes("if sampled")).x -
       firstPage.find((element) => element.str.includes("Optional")).x +
-      firstPage.find((element) => element.str.includes("IQA")).width +
-      23.5,
-    height: -distToFooter + optionalUnitRowHeight,
+      firstPage.find((element) => element.str.includes("if sampled")).width +
+      31.8,
+    height: -distToFooter + optionalUnitRowHeight * 1.5,
     borderColor: rgb(0, 0, 0),
     borderWidth: 0,
     color: rgb(1, 1, 1),
