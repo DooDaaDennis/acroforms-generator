@@ -67,14 +67,16 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   const page = pdfDoc.getPage(pageNum); //first page
 
   //add date achieved
-  let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
-  let ycoord = firstPage[strMandatoryIndex + 1].y;
-  let width = firstPage.find((element) => element.str.includes("Date")).width;
-  let height = rowHeight - 2;
-  //firstPage[strMandatoryIndex].y - firstPage[strMandatoryIndex + 1].y - 1;
-
-  for (let i = strMandatoryIndex; i <= strMandatoryIndex + numMandatory; i++) {
+  for (
+    let i = strMandatoryIndex + 1;
+    i <= strMandatoryIndex + numMandatory + 1;
+    i++
+  ) {
     const textField = form.createTextField("myTextField" + i);
+    let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
+    let ycoord = firstPage[i].y;
+    let width = firstPage.find((element) => element.str.includes("Date")).width;
+    let height = rowHeight - 2;
     textField.addToPage(page, {
       x: xcoord,
       y: ycoord - 5,
@@ -83,7 +85,6 @@ function drawFirstPageFields(pdfDoc, firstPage) {
       borderWidth: 0,
       backgroundColor: rgb(1, 1, 1),
     });
-    ycoord = firstPage[i + 2].y;
   }
   return pdfDoc;
 }
