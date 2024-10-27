@@ -106,6 +106,50 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
         backgroundColor: rgb(1, 1, 1),
       });
     }
+
+    //add assessor signature
+    //prettier-ignore
+    for (
+        let i = strMandatoryIndex + 1;
+        i <= strMandatoryIndex + numMandatory + 1;
+        i++
+      ) {
+        const textField = form.createTextField("myAssessorField" + Math.random());
+        let xcoord = firstPage.find((element) => element.str.includes("Assessor")).x;
+        let ycoord = firstPage[i].y;
+        let width = firstPage.find((element) => element.str.includes("Assessor")).width;
+        let height = firstPage[i].y - firstPage[i + 1].y - 2;
+        textField.addToPage(page, {
+          x: xcoord,
+          y: ycoord - 5,
+          width: width,
+          height: height,
+          borderWidth: 0,
+          backgroundColor: rgb(1, 1, 1),
+        });
+      }
+
+    //add IQA signature
+    //prettier-ignore
+    for (
+        let i = strMandatoryIndex + 1;
+        i <= strMandatoryIndex + numMandatory + 1;
+        i++
+      ) {
+        const textField = form.createTextField("myIQAField" + Math.random());
+        let xcoord = firstPage.find((element) => element.str.includes("IQA")).x;
+        let ycoord = firstPage[i].y;
+        let width = firstPage.find((element) => element.str.includes("IQA")).width;
+        let height = firstPage[i].y - firstPage[i + 1].y - 2;
+        textField.addToPage(page, {
+          x: xcoord,
+          y: ycoord - 5,
+          width: width,
+          height: height,
+          borderWidth: 0,
+          backgroundColor: rgb(1, 1, 1),
+        });
+      }
   }
   return pdfDoc;
 }
