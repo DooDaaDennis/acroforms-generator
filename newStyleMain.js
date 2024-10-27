@@ -159,6 +159,37 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   return pdfDoc;
 }
 
+function drawPracticalFields(pdfDoc) {
+  const pageHeight = myPages[0].pageInfo.height;
+  var practicalPages = myPages.filter((element, index) => {
+    if (
+      element.content.some((contents) =>
+        contents.str.includes("questioned orally")
+      )
+    ) {
+      return true;
+    }
+  });
+  //console.log(practicalPages);
+
+  practicalPages.forEach((page) => {
+    page.content.forEach((textSnippet) => {
+      textSnippet.y = pageHeight - textSnippet.y;
+    });
+    let practicalPageContent = page.content.filter(
+      (textSnippet2) => textSnippet2.str != ""
+    );
+    practicalPageContent = practicalPageContent.filter(
+      (textSnippet2) => textSnippet2.str != " "
+    );
+    practicalPageContent.sort((a, b) => {
+      return a.y - b.y || a.x - b.x;
+    });
+    console.log(practicalPageContent);
+  });
+  return pdfDoc;
+}
+
 async function modifyExistingPDF(path) {
   const existingPdfBytes = fs.readFileSync(path);
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
@@ -180,5 +211,6 @@ inputFiles.forEach((element) => {
     .then((firstPage) => (firstPageArr = firstPage))
     .then(() => modifyExistingPDF("./input/" + book))
     .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
+    .then((pdfDoc)=> drawPracticalFields(pdfDoc))
     .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
 });
