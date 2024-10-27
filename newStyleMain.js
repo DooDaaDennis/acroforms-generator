@@ -144,6 +144,8 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
       });
     }
   });
+
+  //add rectangle to cover up original table
   page.drawRectangle({
     x: firstPage.find((element) => element.str.includes("Optional")).x - 5.3,
     y: firstPage[strOptionalIndex].y - 5.7,
@@ -160,9 +162,11 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   return pdfDoc;
 }
 
-function drawPracticalFields(pdfDoc) {
+function findPracticalPages(pdfDoc) {
   const pageHeight = myPages[0].pageInfo.height;
-  myPages.forEach((page, index) => {
+  const myPagesArr = myPages;
+  var pdfDoc = pdfDoc;
+  myPagesArr.forEach((page, index) => {
     page.content.forEach((pageContents) => (pageContents.pageNum = index));
     page.content.forEach(
       (pageContents) => (pageContents.y = pageHeight - pageContents.y)
@@ -176,30 +180,39 @@ function drawPracticalFields(pdfDoc) {
     ) {
       return true;
     }
+    return practicalPages, pdfDoc;
   });
-  //console.log(practicalPages);
-
-  practicalPages.forEach((page) => {
-    let practicalPageContent = page.content.filter(
-      (textSnippet2) => textSnippet2.str != ""
-    );
-    practicalPageContent = practicalPageContent.filter(
-      (textSnippet2) => textSnippet2.str != " "
-    );
-    practicalPageContent.sort((a, b) => {
-      return a.y - b.y || a.x - b.x;
-    });
-
-    var myJsonString = JSON.stringify(practicalPageContent);
-    if (/riteria.*riteria/.test(myJsonString)) {
-      console.log("hi");
-    } else {
-      console.log("no");
-    }
-    //console.log(practicalPageContent);
-  });
-  return pdfDoc;
 }
+//console.log(practicalPages);
+
+//   practicalPages.forEach((page) => {
+//     let practicalPageContent = page.content.filter(
+//       (textSnippet2) => textSnippet2.str != ""
+//     );
+//     practicalPageContent = practicalPageContent.filter(
+//       (textSnippet2) => textSnippet2.str != " "
+//     );
+//     practicalPageContent.sort((a, b) => {
+//       return a.y - b.y || a.x - b.x;
+//     });
+
+//     //console.log(practicalPageContent);
+//     const firstObservationIndex = practicalPageContent.findIndex(
+//       (element) => element.str === "Observation"
+//     );
+//     const nextLineIndex = practicalPageContent.findIndex(
+//       (element) =>
+//         element.str.includes("Date") || element.str.includes("riteria")
+//     );
+
+//     const numObservations = nextLineIndex - firstObservationIndex;
+//     console.log(numObservations);
+//     //console.log(practicalPageContent);
+//     //console.log(firstObservationIndex);
+//   });
+
+//   return pdfDoc;
+// }
 
 async function modifyExistingPDF(path) {
   const existingPdfBytes = fs.readFileSync(path);
@@ -222,6 +235,6 @@ inputFiles.forEach((element) => {
     .then((firstPage) => (firstPageArr = firstPage))
     .then(() => modifyExistingPDF("./input/" + book))
     .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
-    .then((pdfDoc)=> drawPracticalFields(pdfDoc))
+    .then((pdfDoc)=> findPracticalPages(pdfDoc))
     .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
 });
