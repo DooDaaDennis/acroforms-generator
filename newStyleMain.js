@@ -78,7 +78,18 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
       const textField = form.createTextField("myField" + fieldTypeElement + fieldTypeIndex + Math.random());
       let xcoord = firstPage.find((element) => element.str.includes(fieldTypeElement)).x;
       let ycoord = firstPage[i].y;
+
       let width = firstPage.find((element) => element.str.includes(fieldTypeElement)).width;
+      if (fieldTypeElement === "Learner"){
+        if (firstPage.some((obj)=>obj.str ==="signature")){
+            width = firstPage.find((element) => element.str.includes("Assess")).x -
+            firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10
+        }
+      } else if (fieldTypeElement === "Assessor"){
+        if (firstPage.some((obj)=>obj.str ==="initials")){
+            width = firstPage.find((element) => element.str.includes("IQA")).x - 
+            firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10
+       }}
       let height = firstPage[i].y - firstPage[i + 1].y - 2;
       textField.addToPage(page, {
         x: xcoord,
