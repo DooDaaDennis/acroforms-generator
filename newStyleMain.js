@@ -68,22 +68,17 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   const fieldTypeArr = ["Date", "Learner", "Assessor", "IQA"];
 
   //add date achieved
+  //prettier-ignore
   fieldTypeArr.forEach((fieldTypeElement, fieldTypeIndex) => {
     for (
       let i = strMandatoryIndex + 1;
       i <= strMandatoryIndex + numMandatory + 1;
       i++
     ) {
-      const textField = form.createTextField(
-        "myField" + fieldTypeElement + fieldTypeIndex + Math.random()
-      );
-      let xcoord = firstPage.find((element) =>
-        element.str.includes(fieldTypeElement)
-      ).x;
+      const textField = form.createTextField("myField" + fieldTypeElement + fieldTypeIndex + Math.random());
+      let xcoord = firstPage.find((element) => element.str.includes(fieldTypeElement)).x;
       let ycoord = firstPage[i].y;
-      let width = firstPage.find((element) =>
-        element.str.includes(fieldTypeElement)
-      ).width;
+      let width = firstPage.find((element) => element.str.includes(fieldTypeElement)).width;
       let height = firstPage[i].y - firstPage[i + 1].y - 2;
       textField.addToPage(page, {
         x: xcoord,
