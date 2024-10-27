@@ -67,7 +67,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   const page = pdfDoc.getPage(pageNum); //first page
   const fieldTypeArr = ["Date", "Learner", "Assessor", "IQA"];
 
-  //add date achieved
+  //add mandatory unit fields
   //prettier-ignore
   fieldTypeArr.forEach((fieldTypeElement, fieldTypeIndex) => {
     for (
@@ -100,6 +100,59 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
         backgroundColor: rgb(1, 1, 1),
       });
     }
+  });
+
+  //add optional unit fields
+  //prettier-ignore
+  const optionalUnitFieldTypeArr = ["Optional", "Date", "Learner", "Assessor", "IQA"]
+  const optionalUnitRowHeight =
+    firstPage[strOptionalIndex - 1].y - firstPage[strOptionalIndex].y - 2;
+  const footerIndex = firstPage.length;
+  const distToFooter =
+    firstPage[strOptionalIndex].y - firstPage[footerIndex - 1].y;
+  const numOptionalRows = Math.floor(distToFooter / optionalUnitRowHeight) - 1;
+
+  //prettier-ignore
+  optionalUnitFieldTypeArr.forEach((fieldTypeElement, fieldTypeIndex) => {
+    for (let i = 1; i <= numOptionalRows; i++) {
+      const textField = form.createTextField("myOptionalField" + fieldTypeElement + fieldTypeIndex + Math.random());
+      let xcoord = firstPage.find((element) => element.str.includes(fieldTypeElement)).x;
+      let ycoord = firstPage[strOptionalIndex].y - i * optionalUnitRowHeight-1;
+
+      let width = firstPage.find((element) => element.str.includes(fieldTypeElement)).width;
+      if (fieldTypeElement === "Learner") {
+        if (firstPage.some((obj) => obj.str === "signature")) {
+          width = firstPage.find((element) => element.str.includes("Assess")).x -
+            firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10;
+        }
+      } else if (fieldTypeElement === "Assessor") {
+        if (firstPage.some((obj) => obj.str === "initials")) {
+          width = firstPage.find((element) => element.str.includes("IQA")).x -
+            firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10;
+        }
+      }
+      let height = optionalUnitRowHeight-1;
+      textField.addToPage(page, {
+        x: xcoord,
+        y: ycoord - 5,
+        width: width,
+        height: height,
+        borderWidth: 0,
+        backgroundColor: rgb(1, 1, 1),
+      });
+    }
+  });
+  page.drawRectangle({
+    x: firstPage.find((element) => element.str.includes("Optional")).x,
+    y: firstPage.find((element) => element.str.includes("Optional")).y,
+    width:
+      firstPage.find((element) => element.str.includes("IQA")).x -
+      firstPage.find((element) => element.str.includes("Optional")).x +
+      firstPage.find((element) => element.str.includes("IQA")).width,
+    height: 100,
+    borderColor: rgb(0, 0, 0),
+    borderWidth: 2,
+    color: rgb(0.75, 0.75, 0.75),
   });
   return pdfDoc;
 }
