@@ -151,8 +151,8 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
       firstPage.find((element) => element.str.includes("IQA")).width,
     height: 100,
     borderColor: rgb(0, 0, 0),
-    borderWidth: 2,
-    color: rgb(0.75, 0.75, 0.75),
+    borderWidth: 0,
+    color: rgb(1, 1, 1),
   });
   return pdfDoc;
 }
