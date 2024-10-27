@@ -16,6 +16,7 @@ function extractData(pdf) {
 function returnFirstPage(data) {
   const myPages = data.pages;
   let firstPage;
+  //console.log(data.pages[0]);
 
   myPages.find((element, index) => {
     const pageHeight = element.pageInfo.height;
@@ -58,7 +59,7 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   // first distance between mandatory and optional
   let totalHeight = firstPage[strMandatoryIndex+1].y - firstPage[strOptionalIndex-1].y;
 
-  let rowHeight = totalHeight / numMandatory;
+  let rowHeight = totalHeight / numMandatory - 1;
 
   let pageNum = firstPage[0].pageNumber;
 
@@ -68,17 +69,21 @@ function drawFirstPageFields(pdfDoc, firstPage) {
   //add date achieved
   let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
   let ycoord = firstPage[strMandatoryIndex + 1].y;
+  let width = firstPage.find((element) => element.str.includes("Date")).width;
+  let height = rowHeight - 2;
+  //firstPage[strMandatoryIndex].y - firstPage[strMandatoryIndex + 1].y - 1;
+
   for (let i = strMandatoryIndex; i <= strMandatoryIndex + numMandatory; i++) {
     const textField = form.createTextField("myTextField" + i);
     textField.addToPage(page, {
       x: xcoord,
       y: ycoord - 5,
-      width: 75,
-      height: 18,
+      width: width,
+      height: height,
       borderWidth: 0,
       backgroundColor: rgb(1, 1, 1),
     });
-    ycoord -= rowHeight;
+    ycoord = firstPage[i + 2].y;
   }
   return pdfDoc;
 }
