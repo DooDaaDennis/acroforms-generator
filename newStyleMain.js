@@ -43,7 +43,7 @@ function returnFirstPage(data) {
 }
 
 //Get number of mandatory unit rows
-function drawFirstPageFields(pdfDoc, firstPage) {
+function drawFirstPageFields(pdfDoc, firstPage, docName) {
   let strMandatoryIndex = firstPage.findIndex(
     (obj) => obj.str === "Mandatory units"
   );
@@ -72,11 +72,11 @@ function drawFirstPageFields(pdfDoc, firstPage) {
     i <= strMandatoryIndex + numMandatory + 1;
     i++
   ) {
-    const textField = form.createTextField("myTextField" + i);
+    const textField = form.createTextField("myDateField" + Math.random());
     let xcoord = firstPage.find((element) => element.str.includes("Date")).x;
     let ycoord = firstPage[i].y;
     let width = firstPage.find((element) => element.str.includes("Date")).width;
-    let height = rowHeight - 2;
+    let height = firstPage[i].y - firstPage[i + 1].y - 2;
     textField.addToPage(page, {
       x: xcoord,
       y: ycoord - 5,
@@ -85,6 +85,27 @@ function drawFirstPageFields(pdfDoc, firstPage) {
       borderWidth: 0,
       backgroundColor: rgb(1, 1, 1),
     });
+    //add learner signature
+    //prettier-ignore
+    for (
+      let i = strMandatoryIndex + 1;
+      i <= strMandatoryIndex + numMandatory + 1;
+      i++
+    ) {
+      const textField = form.createTextField("mySignatureField" + Math.random());
+      let xcoord = firstPage.find((element) => element.str.includes("Learner")).x;
+      let ycoord = firstPage[i].y;
+      let width = firstPage.find((element) => element.str.includes("Learner")).width;
+      let height = firstPage[i].y - firstPage[i + 1].y - 2;
+      textField.addToPage(page, {
+        x: xcoord,
+        y: ycoord - 5,
+        width: width,
+        height: height,
+        borderWidth: 0,
+        backgroundColor: rgb(1, 1, 1),
+      });
+    }
   }
   return pdfDoc;
 }
