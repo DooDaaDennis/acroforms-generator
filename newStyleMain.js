@@ -23,7 +23,7 @@ function returnFirstPage(data) {
     const pageHeight = element.pageInfo.height;
     if (
       element.content.some((element) =>
-        element.str.includes("Statement of unit achievement")
+        element.str.includes("statement of unit achievement")
       )
     ) {
       firstPage = myPages[index].content;
@@ -48,11 +48,11 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   let strMandatoryIndex = firstPage.findIndex(
     (obj) => obj.str === "Mandatory units"
   );
-
+  const footerIndex = firstPage.length;
   let strOptionalIndex =
     firstPage.findIndex((obj) => obj.str === "Optional units") != -1
       ? firstPage.findIndex((obj) => obj.str === "Optional units")
-      : firstPage.length();
+      : firstPage.length;
 
   let numMandatory = strOptionalIndex - strMandatoryIndex - 2;
 
@@ -60,7 +60,8 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   // first distance between mandatory and optional
   let totalHeight = firstPage[strMandatoryIndex+1].y - firstPage[strOptionalIndex-1].y;
 
-  let rowHeight = totalHeight / numMandatory - 1;
+  let rowHeight =
+    strOptionalIndex != footerIndex ? totalHeight / numMandatory - 1 : 20; //come back to this. 20 is placeholder
 
   let pageNum = firstPage[0].pageNumber;
 
@@ -91,7 +92,7 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
             width = firstPage.find((element) => element.str.includes("if sampled")).x - 
             firstPage.find((element) => element.str.includes(fieldTypeElement)).x - 10
        }}
-      let height = firstPage[i].y - firstPage[i + 1].y - 2;
+      let height = rowHeight//firstPage[i].y - firstPage[i + 1].y - 2;
       textField.addToPage(page, {
         x: xcoord,
         y: ycoord - 5,
@@ -107,13 +108,16 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
   //prettier-ignore
   const optionalUnitFieldTypeArr = ["Optional", "Date", "Learner", "Assessor", "if sampled"]
   const optionalUnitRowHeight =
-    firstPage[strOptionalIndex - 1].y - firstPage[strOptionalIndex].y - 2;
-  const footerIndex = firstPage.length;
+    firstPage[strOptionalIndex - 2].y - firstPage[strOptionalIndex - 1].y - 2;
+
   const distToFooter =
-    firstPage[strOptionalIndex].y - firstPage[footerIndex - 1].y;
+    strOptionalIndex != footerIndex
+      ? firstPage[strOptionalIndex].y - firstPage[footerIndex - 1].y
+      : firstPage[strMandatoryIndex].y - firstPage[footerIndex - 1].y;
   const numOptionalRows = Math.floor(distToFooter / optionalUnitRowHeight) - 1;
 
   //prettier-ignore
+  if(strOptionalIndex!=footerIndex){
   optionalUnitFieldTypeArr.forEach((fieldTypeElement, fieldTypeIndex) => {
     for (let i = 1; i <= numOptionalRows; i++) {
       const textField = form.createTextField("myOptionalField" + fieldTypeElement + fieldTypeIndex + Math.random());
@@ -144,18 +148,19 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
     }
   });
   page.drawRectangle({
-    x: firstPage.find((element) => element.str.includes("Optional")).x - 5.3,
-    y: firstPage[strOptionalIndex].y - 5.7,
+    x: firstPage.find((element) => element.str.includes("Mandatory")).x - 5.3,
+    y: firstPage[strOptionalIndex - 1].y - optionalUnitRowHeight - 7,
     width:
       firstPage.find((element) => element.str.includes("if sampled")).x -
-      firstPage.find((element) => element.str.includes("Optional")).x +
+      firstPage.find((element) => element.str.includes("Mandatory")).x +
       firstPage.find((element) => element.str.includes("if sampled")).width +
       31.8,
-    height: -distToFooter + optionalUnitRowHeight * 1.5,
+    height: -distToFooter + optionalUnitRowHeight,
     borderColor: rgb(0, 0, 0),
     borderWidth: 0,
     color: rgb(1, 1, 1),
   });
+}
   return pdfDoc;
 }
 
@@ -181,5 +186,5 @@ inputFiles.forEach((element) => {
     .then(() => modifyExistingPDF("./input/" + book))
     .then((pdfDoc) => drawFirstPageFields(pdfDoc, firstPageArr))
     .then((pdfDoc) => saveModifiedPDF(pdfDoc, "./output/" + book.slice(0, -4) + "-editable.pdf"))
-    .catch((error)=>console.log(error + book))
+  //.catch((error)=>console.log(error + error.lineNumber + book))
 });
