@@ -1,2 +1,7 @@
 node_modules/
-output/
+
+# exclude everything
+output/*
+
+# exception to the rule
+!somefolder/.gitkeep 
