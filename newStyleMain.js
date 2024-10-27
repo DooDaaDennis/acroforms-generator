@@ -143,13 +143,14 @@ function drawFirstPageFields(pdfDoc, firstPage, docName) {
     }
   });
   page.drawRectangle({
-    x: firstPage.find((element) => element.str.includes("Optional")).x,
-    y: firstPage.find((element) => element.str.includes("Optional")).y,
+    x: firstPage.find((element) => element.str.includes("Optional")).x - 5.3,
+    y: firstPage[strOptionalIndex].y - 5.7,
     width:
       firstPage.find((element) => element.str.includes("IQA")).x -
       firstPage.find((element) => element.str.includes("Optional")).x +
-      firstPage.find((element) => element.str.includes("IQA")).width,
-    height: 100,
+      firstPage.find((element) => element.str.includes("IQA")).width +
+      23.5,
+    height: -distToFooter + optionalUnitRowHeight,
     borderColor: rgb(0, 0, 0),
     borderWidth: 0,
     color: rgb(1, 1, 1),
